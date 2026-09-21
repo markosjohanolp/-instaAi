@@ -54,21 +54,22 @@ def publish():
         "instagram_username": "user",
         "instagram_password": "pass",
         "hashtags": "#tag1 #tag2",
-        "template": "gradient"  // اختياري
+        "template": "gradient"
     }
     """
     data = request.get_json(silent=True) or {}
 
-    text = data.get("text", "").strip()
-    channel_username = data.get("channel_username", "").strip()
-    channel_title = data.get("channel_title", "").strip()
-    channel_link = data.get("channel_link", "").strip()
-    logo_url = data.get("logo_url", "").strip()
-    hashtags = data.get("hashtags", "").strip()
+    # استخدام (x or "") للتعامل مع None
+    text = (data.get("text") or "").strip()
+    channel_username = (data.get("channel_username") or "").strip()
+    channel_title = (data.get("channel_title") or "").strip()
+    channel_link = (data.get("channel_link") or "").strip()
+    logo_url = (data.get("logo_url") or "").strip()
+    hashtags = (data.get("hashtags") or "").strip()
     template = data.get("template")
 
-    instagram_username = data.get("instagram_username", "").strip()
-    instagram_password = data.get("instagram_password", "").strip()
+    instagram_username = (data.get("instagram_username") or "").strip()
+    instagram_password = (data.get("instagram_password") or "").strip()
 
     # التحقق
     if not text:
@@ -131,8 +132,8 @@ def check():
     Body: {"username": "...", "password": "..."}
     """
     data = request.get_json(silent=True) or {}
-    username = data.get("username", "").strip()
-    password = data.get("password", "").strip()
+    username = (data.get("username") or "").strip()
+    password = (data.get("password") or "").strip()
 
     if not username or not password:
         return jsonify({"ok": False, "error": "بيانات ناقصة"}), 400
@@ -150,7 +151,6 @@ def check():
 @app.route("/preview", methods=["POST"])
 def preview():
     """
-    يولّد صورة فقط — للمعاينة.
     Body: {
         "text": "...",
         "channel_username": "...",
@@ -161,7 +161,7 @@ def preview():
     }
     """
     data = request.get_json(silent=True) or {}
-    text = data.get("text", "").strip()
+    text = (data.get("text") or "").strip()
 
     if not text:
         return jsonify({"ok": False, "error": "النص مطلوب"}), 400
@@ -169,10 +169,10 @@ def preview():
     try:
         image_path = generate_image(
             text=text,
-            channel_username=data.get("channel_username", ""),
-            channel_title=data.get("channel_title", ""),
-            logo_url=data.get("logo_url", ""),
-            channel_link=data.get("channel_link", ""),
+            channel_username=(data.get("channel_username") or ""),
+            channel_title=(data.get("channel_title") or ""),
+            logo_url=(data.get("logo_url") or ""),
+            channel_link=(data.get("channel_link") or ""),
             template=data.get("template")
         )
         return jsonify({
